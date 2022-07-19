@@ -7,39 +7,6 @@ const repositoriesDatalist = document.querySelector('.repositories__datalist');
 let repoObjects;
 let searchTimer;
 
-let encr;
-let encrKey;
-let decrKey;
-
-function getKey() {
-  return window.crypto.subtle.generateKey(
-    {
-      name: "RSA-OAEP",
-      modulusLength: 4096,
-      publicExponent: new Uint8Array([1, 0, 1]),
-      hash: "SHA-256"
-    },
-    true,
-    ["encrypt", "decrypt"]
-  );
-}
-
-getKey().then(data => {
-  console.log(data);
-  encrKey = data.publicKey;
-  decrKey = data.privateKey;
-  window.crypto.subtle.encrypt(
-    {
-      name: "RSA-OAEP"
-    },
-    encrKey,
-    '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'
-  ).then(data => console.log(data));
-});
-
-
-
-
 inputSearch.addEventListener('input', (event) => {
   if (inputSearch.value === '') {
     clearTimeout(searchTimer);
@@ -129,7 +96,6 @@ async function searchRepos() {
   } catch (error) {
     console.log(error);
   }
-
 }
 
 function renderOptions(repos) {
