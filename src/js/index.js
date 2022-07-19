@@ -7,6 +7,39 @@ const repositoriesDatalist = document.querySelector('.repositories__datalist');
 let repoObjects;
 let searchTimer;
 
+let encr;
+let encrKey;
+let decrKey;
+
+function getKey() {
+  return window.crypto.subtle.generateKey(
+    {
+      name: "RSA-OAEP",
+      modulusLength: 4096,
+      publicExponent: new Uint8Array([1, 0, 1]),
+      hash: "SHA-256"
+    },
+    true,
+    ["encrypt", "decrypt"]
+  );
+}
+
+getKey().then(data => {
+  console.log(data);
+  encrKey = data.publicKey;
+  decrKey = data.privateKey;
+  window.crypto.subtle.encrypt(
+    {
+      name: "RSA-OAEP"
+    },
+    encrKey,
+    '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'
+  ).then(data => console.log(data));
+});
+
+
+
+
 inputSearch.addEventListener('input', (event) => {
   if (inputSearch.value === '') {
     clearTimeout(searchTimer);
@@ -90,7 +123,6 @@ async function searchRepos() {
     return fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(`${inputSearch.value} in:name`)}&sort=stars&per_page=5`, {
     headers: {
       Accept: 'application/vnd.github+json',
-      Authorization: 'Token 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'
     }
   })
     .then( (response) => response.json())
@@ -125,6 +157,7 @@ async function getOptions() {
         renderOptions(response.items);
       }
     } else {
+      console.log(response);
       showOptionsError(response.message);
     }
 }
